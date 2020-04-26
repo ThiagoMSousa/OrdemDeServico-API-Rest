@@ -1,1 +1,1 @@
-ALTER TABLE tbCliente RENAME COLUMN telefone to fone;
+ALTER TABLE tb_cliente RENAME COLUMN telefone to fone;
