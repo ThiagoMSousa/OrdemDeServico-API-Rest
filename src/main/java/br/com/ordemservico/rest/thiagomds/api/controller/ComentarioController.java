@@ -1,6 +1,7 @@
 package br.com.ordemservico.rest.thiagomds.api.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -18,6 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.ordemservico.rest.thiagomds.api.model.Comentario;
 import br.com.ordemservico.rest.thiagomds.api.model.ComentarioInput;
 import br.com.ordemservico.rest.thiagomds.api.model.ComentarioModel;
+import br.com.ordemservico.rest.thiagomds.domain.exception.EntidadeNaoEncontradaException;
+import br.com.ordemservico.rest.thiagomds.domain.model.OrdemServico;
+import br.com.ordemservico.rest.thiagomds.domain.repository.OrdemServicoRepository;
 import br.com.ordemservico.rest.thiagomds.domain.service.GestaoOrdemServicoService;
 
 @RestController
@@ -28,8 +32,18 @@ public class ComentarioController {
 	private GestaoOrdemServicoService gestaoOrdemServico;
 	
 	@Autowired
+	private OrdemServicoRepository ordemServicoRepository;
+	
+	@Autowired
 	private ModelMapper modelMapper;
 	
+	@GetMapping
+	public List<ComentarioModel> listar( @PathVariable Long ordemServicoId ) {
+		OrdemServico ordemServico = ordemServicoRepository.findById( ordemServicoId )
+				.orElseThrow( () -> new EntidadeNaoEncontradaException( "Ordem de Serviço Não Encontrada !!!" ) );
+		
+		return toCollectionModel( ordemServico.getComentarios() );
+	}
 	
 	// ADICIONA COMENTARIO
 	@PostMapping
@@ -46,6 +60,13 @@ public class ComentarioController {
 	// Retorna um Comentario MODEL
 	private ComentarioModel toModel( Comentario comentario ) {
 		return modelMapper.map( comentario, ComentarioModel.class );
+	}
+	
+	// Retorna uma LISTA de Comentario MODEL
+	private List<ComentarioModel> toCollectionModel( List<Comentario> comentarios) {
+		return comentarios.stream()
+				.map( comentario -> toModel(comentario) )
+				.collect( Collectors.toList() );
 	}
 
 }
