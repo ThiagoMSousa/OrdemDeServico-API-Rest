@@ -16,6 +16,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import br.com.ordemservico.rest.thiagomds.api.model.Comentario;
+import br.com.ordemservico.rest.thiagomds.domain.exception.NegocioException;
 
 @Entity
 @Table(name = "tb_ordem_servico")
@@ -97,6 +98,19 @@ public class OrdemServico {
 		return true;
 	}
 	
+	public boolean podeSerFinalizada() {
+		return StatusOrdemServico.ABERTA.equals( getStatus() );
+	}
 	
+	public boolean naoPodeSerFinalizada() {
+		return !podeSerFinalizada();
+	}
 	
+	public void finalizar() {
+		if( naoPodeSerFinalizada() ) {
+			throw new NegocioException("Ordem de Serviço Não Pode ser Finalizada");
+		}
+		setStatus( StatusOrdemServico.FINALIZADA );
+		setDataFinalizacao( OffsetDateTime.now() );
+	}	
 }
