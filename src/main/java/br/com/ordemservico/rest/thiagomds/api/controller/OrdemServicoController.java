@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.ordemservico.rest.thiagomds.api.model.OrdemServicoInput;
 import br.com.ordemservico.rest.thiagomds.api.model.OrdemServicoModel;
 import br.com.ordemservico.rest.thiagomds.domain.model.OrdemServico;
 import br.com.ordemservico.rest.thiagomds.domain.repository.OrdemServicoRepository;
@@ -41,7 +42,11 @@ public class OrdemServicoController {
 	// CADASTRAR ORDEM DE SERVIÇO
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public OrdemServicoModel criar( @Valid @RequestBody OrdemServico ordemServico ) {
+	// Recebendo o Dados via OrdemServicoInput
+	// E Convertendo via o Método toEnntity para OrdemServico
+	public OrdemServicoModel criar( @Valid @RequestBody OrdemServicoInput ordemServicoInput ) {
+		OrdemServico ordemServico = toEntity( ordemServicoInput );
+		
 		return toModel( gestaoOrdemServico.criar(ordemServico) );
 	}
 	
@@ -79,5 +84,10 @@ public class OrdemServicoController {
 				.map( ordemServico -> toModel(ordemServico) )
 				.collect( Collectors.toList() );
 				
+	}
+	
+	// Convertendo OrdemServicoInput para OrdemServico
+	public OrdemServico toEntity( OrdemServicoInput ordemServicoInput ) {
+		return modelMapper.map( ordemServicoInput, OrdemServico.class );
 	}
 }
