@@ -11,11 +11,19 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.groups.ConvertGroup;
+import javax.validation.groups.Default;
 
 import org.hibernate.annotations.ManyToAny;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
+
+
+import br.com.ordemservico.rest.thiagomds.domain.ValidationGroups;
 
 @Entity
 @Table(name = "tb_ordem_servico")
@@ -25,11 +33,17 @@ public class OrdemServico {
 	@GeneratedValue(strategy = GenerationType.IDENTITY ) // Auto-incremento
 	private Long 				id;
 	
+	@Valid
+	// Quando for efetuar Validaçao do Cliente, não usar o DEFAULT, converter pra ValidationGroups.ClienteId
+	@ConvertGroup(from = Default.class, to = ValidationGroups.ClienteId.class)
+	@NotNull
 	@ManyToOne // N-1 - Muitas Ordens de Serviços possui 1 Cliente
 	private Cliente 			cliente;
 	
-	
+	@NotBlank
 	private String 				descricao;
+	
+	@NotNull
 	private BigDecimal 			preco;
 	
 	@JsonProperty(access = Access.READ_ONLY) // Somente LEITURA
