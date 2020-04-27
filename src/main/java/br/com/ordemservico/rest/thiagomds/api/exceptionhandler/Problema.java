@@ -3,6 +3,10 @@ package br.com.ordemservico.rest.thiagomds.api.exceptionhandler;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+@JsonInclude(Include.NON_NULL) // Só inclua campos NÃO NULO
 public class Problema {
 	
 	private Integer 		status;
@@ -12,7 +16,7 @@ public class Problema {
 	
 	// Setters
 	public void setStatus(Integer status) 		{ this.status = status; }
-	public void setData(LocalDateTime dataHora) { this.dataHora = dataHora; }
+	public void setDataHora(LocalDateTime dataHora) { this.dataHora = dataHora; }
 	public void setTitulo(String titulo)		{ this.titulo = titulo; }
 	public void setCampos(List<Campo> campos) 	{ this.campos = campos;	}
 	

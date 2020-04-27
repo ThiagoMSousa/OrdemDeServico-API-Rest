@@ -22,18 +22,25 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.ordemservico.rest.thiagomds.domain.model.Cliente;
 import br.com.ordemservico.rest.thiagomds.domain.repository.ClienteRepository;
+import br.com.ordemservico.rest.thiagomds.domain.service.CadastroClienteService;
 
 
 @RestController
 @RequestMapping("/clientes") // Declarando que esse CONTROLADOR irá responder tudo que estiver em /clientes
 public class ClienteController {
 	
+	/*
 	@PersistenceContext
 	private EntityManager manager;
+	*/
 	
 	// Instância de ClienteRepository
 	@Autowired
 	private ClienteRepository clienteRepository;
+	
+	// Injetando Cadastro Cliente
+	@Autowired
+	private CadastroClienteService cadastroCliente;
 	
 	
 	// LISTAR TODOS OS CLIENTES
@@ -66,8 +73,7 @@ public class ClienteController {
 			// ResponseEntity = tipo que representa a resposta que vai ser retornada
 			// Código 200 = OK
 			return ResponseEntity.ok( cliente.get() );
-		}
-		
+		}	
 		
 		// orElse - Retorna o valor presenta na VARIAVEL, no caso cliente, ou retorna NULL
 		return ResponseEntity.notFound().build();
@@ -77,7 +83,7 @@ public class ClienteController {
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public Cliente adicionar( @Valid @RequestBody Cliente cliente ) {
-		return clienteRepository.save(cliente);		
+		return cadastroCliente.salvar(cliente);
 	}
 	
 	// ATUALIZAR CLIENTE
@@ -88,9 +94,8 @@ public class ClienteController {
 		if( !clienteRepository.existsById(clienteId) ) {
 			return ResponseEntity.notFound().build();
 		}
-		
 		cliente.setId(clienteId);
-		cliente	= clienteRepository.save(cliente);
+		cliente	= cadastroCliente.salvar(cliente);
 		
 		return ResponseEntity.ok(cliente);
 	}
@@ -102,8 +107,7 @@ public class ClienteController {
 		if( !clienteRepository.existsById(clienteId) ) {
 			return ResponseEntity.notFound().build();	
 		}
-		
-		clienteRepository.deleteById(clienteId);
+		cadastroCliente.excluir(clienteId);
 		
 		return ResponseEntity.noContent().build();
 	}

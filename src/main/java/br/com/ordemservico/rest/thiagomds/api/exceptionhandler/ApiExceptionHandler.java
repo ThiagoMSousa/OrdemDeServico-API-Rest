@@ -13,8 +13,11 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import br.com.ordemservico.rest.thiagomds.domain.exception.NegocioException;
 
 @ControllerAdvice // Componente do Spring para Tratamento de Controladores de Exception
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
@@ -22,6 +25,19 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 	// Traduzindo a Mensagem de Erro
 	@Autowired
 	private MessageSource messageSource;
+	
+	// Caso qualquer Exceção seja lançada, cair nesse método que ele efetuará o tratamento
+	@ExceptionHandler(NegocioException.class)
+	public ResponseEntity<Object> handleNegocio( NegocioException ex, WebRequest request ) {
+		var status = HttpStatus.BAD_REQUEST;
+		var problema = new Problema();
+		
+		problema.setStatus( status.value() );
+		problema.setTitulo( ex.getMessage() );
+		problema.setDataHora( LocalDateTime.now() );
+		
+		return handleExceptionInternal(ex, problema, new HttpHeaders(), status, request);
+	}
 	
 	// Capturando e Retornando o Tipo e a Mensagem de Erro
 	@Override
@@ -47,7 +63,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 		problema.setStatus( status.value() );
 		problema.setTitulo("Um ou mais campos estão inválidos."
 				+ "Faça o preenchimento correto, e tente novamente.");
-		problema.setData( LocalDateTime.now() );
+		problema.setDataHora( LocalDateTime.now() );
 		problema.setCampos(campos);
 		
 		return super.handleExceptionInternal(ex, problema, headers, status, request);

@@ -13,7 +13,11 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long>{
 	
 	// Pesquisar por NOME
 	List<Cliente> findByNome(String nome);
+	
 	// Pesquisar por NOME contendo a palavra
 	List<Cliente> findByNomeContaining(String nome);
+	
+	// Pesquisar por E-MAIL
+	Cliente findByEmail(String email);
 
 }
