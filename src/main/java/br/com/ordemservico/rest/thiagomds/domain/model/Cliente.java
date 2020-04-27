@@ -17,7 +17,7 @@ import br.com.ordemservico.rest.thiagomds.domain.ValidationGroups;
 @Table(name = "tb_cliente")
 public class Cliente {
 	
-	@NotNull(groups = ValidationGroups.ClienteId.class)
+	//@NotNull(groups = ValidationGroups.ClienteId.class)
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;

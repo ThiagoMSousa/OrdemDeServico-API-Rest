@@ -1,8 +1,9 @@
 package br.com.ordemservico.rest.thiagomds.domain.model;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -11,20 +12,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.groups.ConvertGroup;
-import javax.validation.groups.Default;
 
-import org.hibernate.annotations.ManyToAny;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonProperty.Access;
-
-
-import br.com.ordemservico.rest.thiagomds.domain.ValidationGroups;
+import br.com.ordemservico.rest.thiagomds.api.model.Comentario;
 
 @Entity
 @Table(name = "tb_ordem_servico")
@@ -34,29 +25,33 @@ public class OrdemServico {
 	@GeneratedValue(strategy = GenerationType.IDENTITY ) // Auto-incremento
 	private Long 				id;
 	
-	@Valid
+	//@Valid
 	// Quando for efetuar Validaçao do Cliente, não usar o DEFAULT, converter pra ValidationGroups.ClienteId
-	@ConvertGroup(from = Default.class, to = ValidationGroups.ClienteId.class)
-	@NotNull
+	//@ConvertGroup(from = Default.class, to = ValidationGroups.ClienteId.class)
+	//@NotNull
 	@ManyToOne // N-1 - Muitas Ordens de Serviços possui 1 Cliente
 	private Cliente 			cliente;
 	
-	@NotBlank
+	//@NotBlank
 	private String 				descricao;
 	
-	@NotNull
+	//@NotNull
 	private BigDecimal 			preco;
 	
-	@JsonProperty(access = Access.READ_ONLY) // Somente LEITURA
+	//@JsonProperty(access = Access.READ_ONLY) // Somente LEITURA
 	@Enumerated(EnumType.STRING) // Coluna de Status será uma STRING
 	private StatusOrdemServico 	status;
 	
-	@JsonProperty(access = Access.READ_ONLY)
+	//@JsonProperty(access = Access.READ_ONLY)
 	//OffsetDateTime = Data/Hora Local
 	private OffsetDateTime		dataAbertura;
 	
-	@JsonProperty(access = Access.READ_ONLY)
+	//@JsonProperty(access = Access.READ_ONLY)
 	private OffsetDateTime		dataFinalizacao;
+	
+	@OneToMany(mappedBy = "ordemServico") // Uma Ordem de Serviço pode ter Muitos Comentarios
+	// mappedBy = "ordemServico" - Vinculando Comentario à OrdemServico
+	private List<Comentario> 	comentarios = new ArrayList<>();
 	
 	// Setters
 	public void setId(Long id) 										{ this.id = id; }
@@ -66,6 +61,7 @@ public class OrdemServico {
 	public void setStatus(StatusOrdemServico status) 				{ this.status = status; }
 	public void setDataAbertura(OffsetDateTime dataAbertura) 		{ this.dataAbertura = dataAbertura; }
 	public void setDataFinalizacao(OffsetDateTime dataFinalizacao)	{ this.dataFinalizacao = dataFinalizacao; }
+	public void setComentarios(List<Comentario> comentarios) 		{ this.comentarios = comentarios; }
 	
 	// Getters
 	public Long getId() 						{ return id; }
@@ -74,9 +70,9 @@ public class OrdemServico {
 	public BigDecimal getPreco() 				{ return preco; }
 	public StatusOrdemServico getStatus() 		{ return status; }	
 	public OffsetDateTime getDataAbertura() 	{ return dataAbertura; }
-	public OffsetDateTime getDataFinalizacao()	{ return dataFinalizacao; }
-	
-	
+	public OffsetDateTime getDataFinalizacao()	{ return dataFinalizacao; }	
+	public List<Comentario> getComentarios() 	{ return comentarios; }
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
