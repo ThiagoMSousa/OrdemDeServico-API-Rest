@@ -2,6 +2,7 @@ package br.com.ordemservico.rest.thiagomds.api.controller;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -40,14 +41,14 @@ public class OrdemServicoController {
 	// CADASTRAR ORDEM DE SERVIÇO
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public OrdemServico criar( @Valid @RequestBody OrdemServico ordemServico ) {
-		return gestaoOrdemServico.criar(ordemServico);
+	public OrdemServicoModel criar( @Valid @RequestBody OrdemServico ordemServico ) {
+		return toModel( gestaoOrdemServico.criar(ordemServico) );
 	}
 	
 	// LISTAR TODAS AS ORDENS DE SERVIÇOS
 	@GetMapping
-	public List<OrdemServico> listar(){
-		return ordemServicoRespository.findAll();
+	public List<OrdemServicoModel> listar(){
+		return toCollectionModel( ordemServicoRespository.findAll() );
 	}
 	
 	// BUSCAR POR ORDEM DE SERVIÇO
@@ -65,5 +66,18 @@ public class OrdemServicoController {
 		}
 		// Caso Contrario, Retorna 404
 		return ResponseEntity.notFound().build();
+	}
+	
+	// Convertendo OrdemServico para OrdemServicoModel
+	private OrdemServicoModel toModel( OrdemServico ordemServico ) {
+		return modelMapper.map(ordemServico, OrdemServicoModel.class);
+	}
+	
+	// Convertendo uma Coleção de OrdemServico para uma Coleção de OrdemServicoModel
+	private List<OrdemServicoModel> toCollectionModel( List<OrdemServico> ordensServico ){
+		return ordensServico.stream()
+				.map( ordemServico -> toModel(ordemServico) )
+				.collect( Collectors.toList() );
+				
 	}
 }
