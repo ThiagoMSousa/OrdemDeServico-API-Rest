@@ -3,6 +3,9 @@ package br.com.ordemservico.rest.thiagomds.api.exceptionhandler;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +19,11 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice // Componente do Spring para Tratamento de Controladores de Exception
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 	
+	// Traduzindo a Mensagem de Erro
+	@Autowired
+	private MessageSource messageSource;
+	
+	// Capturando e Retornando o Tipo e a Mensagem de Erro
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
@@ -26,8 +34,10 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 		// Capturando todos os Erros do BindingResult
 		for( ObjectError error : ex.getBindingResult().getAllErrors() ) {
 			
+			// Capturando o CAMPO
 			String nome = ((FieldError) error).getField();
-			String mensagem = error.getDefaultMessage();
+			// Capturando a MENSAGEM e Carregando do Arquivo MESSAGES.PROPERTIES
+			String mensagem = messageSource.getMessage( error, LocaleContextHolder.getLocale() );
 			
 			campos.add( new Problema.Campo(nome, mensagem) );	
 		}
