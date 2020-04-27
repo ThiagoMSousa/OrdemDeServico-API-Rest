@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import javax.validation.Valid;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.ordemservico.rest.thiagomds.api.model.OrdemServicoModel;
 import br.com.ordemservico.rest.thiagomds.domain.model.OrdemServico;
 import br.com.ordemservico.rest.thiagomds.domain.repository.OrdemServicoRepository;
 import br.com.ordemservico.rest.thiagomds.domain.service.GestaoOrdemServicoService;
@@ -30,6 +32,9 @@ public class OrdemServicoController {
 	
 	@Autowired
 	private OrdemServicoRepository ordemServicoRespository;
+	
+	@Autowired
+	private ModelMapper modelMapper;
 	
 	
 	// CADASTRAR ORDEM DE SERVIÇO
@@ -47,12 +52,16 @@ public class OrdemServicoController {
 	
 	// BUSCAR POR ORDEM DE SERVIÇO
 	@GetMapping("/{ordemServicoId}")
-	public ResponseEntity<OrdemServico> buscar( @PathVariable Long ordemServicoId ) {
+	public ResponseEntity<OrdemServicoModel> buscar( @PathVariable Long ordemServicoId ) {
 		Optional<OrdemServico> ordemServico = ordemServicoRespository.findById(ordemServicoId);
 		
 		// Se Encontar a Ordem de Serviço, Retorna OK com os Dados da Ordem Serviço
 		if( ordemServico.isPresent() ) {
-			return ResponseEntity.ok( ordemServico.get() );
+			
+			// O ModelMapper, vai instanciar um OrdemServicoModel
+			// E vai atribuir as propriedades que estão dentro da OrdemServico, na propria instancia criada
+			OrdemServicoModel ordemServicoModel = modelMapper.map(ordemServico.get(), OrdemServicoModel.class);
+			return ResponseEntity.ok( ordemServicoModel );
 		}
 		// Caso Contrario, Retorna 404
 		return ResponseEntity.notFound().build();
