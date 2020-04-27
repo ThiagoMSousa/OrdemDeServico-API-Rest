@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.ordemservico.rest.thiagomds.api.model.Comentario;
+import br.com.ordemservico.rest.thiagomds.domain.exception.EntidadeNaoEncontradaException;
 import br.com.ordemservico.rest.thiagomds.domain.exception.NegocioException;
 import br.com.ordemservico.rest.thiagomds.domain.model.Cliente;
 import br.com.ordemservico.rest.thiagomds.domain.model.OrdemServico;
@@ -46,7 +47,7 @@ public class GestaoOrdemServicoService {
 	public Comentario adicionarComentario( Long ordemServicoId, String descricao ) {
 		// Buscando a OrdemServico no Repositorio
 		OrdemServico ordemServico= ordemServicoRepository.findById( ordemServicoId )
-				.orElseThrow( () -> new NegocioException("Ordem de Serviço Não Encontrada !!!") );
+				.orElseThrow( () -> new EntidadeNaoEncontradaException("Ordem de Serviço Não Encontrada !!!") );
 		
 		// Buscando e Instanciando as Propriedades do Comentario
 		Comentario comentario = new Comentario();

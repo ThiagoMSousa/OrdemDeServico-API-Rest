@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import br.com.ordemservico.rest.thiagomds.domain.exception.EntidadeNaoEncontradaException;
 import br.com.ordemservico.rest.thiagomds.domain.exception.NegocioException;
 
 @ControllerAdvice // Componente do Spring para Tratamento de Controladores de Exception
@@ -26,6 +27,19 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 	// Traduzindo a Mensagem de Erro
 	@Autowired
 	private MessageSource messageSource;
+	
+	// Caso qualquer Exceção seja lançada, cair nesse método que ele efetuará o tratamento
+	@ExceptionHandler(EntidadeNaoEncontradaException.class)
+	public ResponseEntity<Object> handleEntidadeNaoEncotrada( NegocioException ex, WebRequest request ) {
+		var status = HttpStatus.NOT_FOUND;
+		var problema = new Problema();
+		
+		problema.setStatus( status.value() );
+		problema.setTitulo( ex.getMessage() );
+		problema.setDataHora( OffsetDateTime.now() );
+		
+		return handleExceptionInternal(ex, problema, new HttpHeaders(), status, request);
+	}
 	
 	// Caso qualquer Exceção seja lançada, cair nesse método que ele efetuará o tratamento
 	@ExceptionHandler(NegocioException.class)
