@@ -2,6 +2,7 @@ package br.com.ordemservico.rest.thiagomds.domain.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -51,10 +52,11 @@ public class OrdemServico {
 	private StatusOrdemServico 	status;
 	
 	@JsonProperty(access = Access.READ_ONLY)
-	private LocalDateTime		dataAbertura;
+	//OffsetDateTime = Data/Hora Local
+	private OffsetDateTime		dataAbertura;
 	
 	@JsonProperty(access = Access.READ_ONLY)
-	private LocalDateTime		dataFinalizacao;
+	private OffsetDateTime		dataFinalizacao;
 	
 	// Setters
 	public void setId(Long id) 										{ this.id = id; }
@@ -62,8 +64,8 @@ public class OrdemServico {
 	public void setDescricao(String descricao)						{ this.descricao = descricao; }
 	public void setPreco(BigDecimal preco) 							{ this.preco = preco; }	
 	public void setStatus(StatusOrdemServico status) 				{ this.status = status; }
-	public void setDataAbertura(LocalDateTime dataAbertura) 		{ this.dataAbertura = dataAbertura; }
-	public void setDataFinalizacao(LocalDateTime dataFinalizacao)	{ this.dataFinalizacao = dataFinalizacao; }
+	public void setDataAbertura(OffsetDateTime dataAbertura) 		{ this.dataAbertura = dataAbertura; }
+	public void setDataFinalizacao(OffsetDateTime dataFinalizacao)	{ this.dataFinalizacao = dataFinalizacao; }
 	
 	// Getters
 	public Long getId() 						{ return id; }
@@ -71,8 +73,8 @@ public class OrdemServico {
 	public String getDescricao() 				{ return descricao; }
 	public BigDecimal getPreco() 				{ return preco; }
 	public StatusOrdemServico getStatus() 		{ return status; }	
-	public LocalDateTime getDataAbertura() 		{ return dataAbertura; }
-	public LocalDateTime getDataFinalizacao()	{ return dataFinalizacao; }
+	public OffsetDateTime getDataAbertura() 	{ return dataAbertura; }
+	public OffsetDateTime getDataFinalizacao()	{ return dataFinalizacao; }
 	
 	
 	@Override
